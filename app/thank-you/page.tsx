@@ -1,0 +1,3 @@
+import {Header} from '@/components/navigation';import {Footer} from '@/components/footer';import type {Metadata} from 'next';
+export const metadata:Metadata={title:'Thank you for your request',alternates:{canonical:'/thank-you'},robots:{index:false,follow:false}};
+export default function Page(){return <><div id="top"/><Header/><main className="shell legal"><h1>Thank you for your request</h1><div className="thanks-mark">✓</div><p>Your request has been received. Alexander will review the information you shared and follow up using your email.</p><p>If you requested a website review, the next step is a look at your mobile experience, service clarity, and quote request flow.</p><a className="button" href="/construction-websites">Back to FLIPTECH ↗</a></main><Footer/></>}

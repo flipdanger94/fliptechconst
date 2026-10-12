@@ -1,0 +1,1 @@
+import type { MetadataRoute } from 'next'; import {site} from '@/lib/config'; export default function sitemap():MetadataRoute.Sitemap{return ['/construction-websites','/privacy','/terms'].map(p=>({url:site.url+p,changeFrequency:p==='/construction-websites'?'monthly':'yearly',priority:p==='/construction-websites'?1:0.3}))}

@@ -1,0 +1,10 @@
+import {test} from 'node:test';import assert from 'node:assert/strict';import {leadSchema} from '../lib/lead-schema';import {POST} from '../app/api/leads/route';
+const valid={fullName:'Alex Owner',email:'owner@example.com',company:'Sample Construction',requestType:'review',website:'https://example.com',consent:true,requestId:'507feb50-155f-4c2c-92d9-7549a48d5140'};
+test('valid review retains campaign attribution',()=>{const parsed=leadSchema.parse({...valid,utm:{utm_source:'linkedin'}});assert.equal(parsed.utm.utm_source,'linkedin');assert.equal(parsed.consent,true)});
+test('review requires a public HTTP website and consent',()=>{assert.equal(leadSchema.safeParse({...valid,website:''}).success,false);assert.equal(leadSchema.safeParse({...valid,website:'javascript:alert(1)'}).success,false);assert.equal(leadSchema.safeParse({...valid,consent:false}).success,false)});
+test('new website can be requested without a website URL',()=>assert.equal(leadSchema.safeParse({...valid,requestType:'new',website:''}).success,true));
+test('honeypot and excessive details rejected',()=>{assert.equal(leadSchema.safeParse({...valid,honeypot:'bot'}).success,false);assert.equal(leadSchema.safeParse({...valid,details:'a'.repeat(3001)}).success,false)});
+function request(body:string,origin='http://localhost:3000'){return new Request('http://localhost:3000/api/leads',{method:'POST',headers:{'content-type':'application/json',origin},body})}
+test('cross-origin submission is rejected',async()=>assert.equal((await POST(request(JSON.stringify(valid),'https://other.example'))).status,403));
+test('malformed JSON and invalid payload rejected',async()=>{assert.equal((await POST(request('{bad'))).status,400);assert.equal((await POST(request('{}'))).status,400)});
+test('unconfigured storage never reports a successful lead',async()=>{delete process.env.DATABASE_URL;delete process.env.RESEND_API_KEY;const response=await POST(request(JSON.stringify(valid)));assert.equal(response.status,503);assert.equal((await response.json()).ok,undefined)});

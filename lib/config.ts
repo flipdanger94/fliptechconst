@@ -1,0 +1,1 @@
+export const site = { name: 'FLIPTECH', developer: 'Alexander Push', url: process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000', email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || '', linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL || '' };
